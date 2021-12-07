@@ -1,0 +1,38 @@
+apiVersion: apps/v1 # Usa apps/v1beta2 para versiones anteriores a 1.9.0
+kind: Deployment
+metadata:
+  name: backend-keycloak
+  labels:
+    app: backend-keycloak
+spec:
+  selector:
+    matchLabels:
+      app: backend-keycloak
+  replicas: 2 # indica al controlador que ejecute 2 pods
+  template:
+    metadata:
+      labels:
+        app: backend-keycloak
+    spec:
+      containers:
+      - name: backend-keycloak
+        image: cavanosa/backend-keycloak:latest
+        ports:
+        - containerPort: 8090
+        imagePullPolicy: Always
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: backend-keycloak
+  labels:
+    app: backend-keycloak
+spec:
+  selector:
+    app: backend-keycloak
+  ports:
+    - nodePort: 30007
+      protocol: TCP
+      port: 8090
+      targetPort: 8090
+  type: NodePort
